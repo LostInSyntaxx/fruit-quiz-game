@@ -15,7 +15,7 @@ app.use('/api/auth', authRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://frontend-taupe-five-10.vercel.app"],
+    origin: ["http://localhost:5173", "https://frontend-taupe-five-10.vercel.app", "https://fruit-quiz-game.onrender.com"],
     methods: ["GET", "POST"]
   }
 });
