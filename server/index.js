@@ -110,6 +110,12 @@ io.on('connection', (socket) => {
     if (!room || room.gameState !== 'playing') return;
 
     const question = room.questions[questionIndex];
+    
+    // Validate answerIndex
+    if (answerIndex < -1 || answerIndex >= question.options.length) {
+      return; // Invalid answer
+    }
+    
     const isCorrect = answerIndex === question.correctIndex;
     
     let points = 0;
@@ -133,7 +139,7 @@ io.on('connection', (socket) => {
       playerId: socket.id,
       correct: isCorrect,
       points,
-      playerScores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score }))
+      playerScores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score, avatar: p.avatar }))
     });
   });
 
