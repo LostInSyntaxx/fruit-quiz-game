@@ -1,0 +1,17 @@
+{
+  "name": "fruit-quiz-game",
+  "version": "1.0.0",
+  "description": "Multiplayer Fruit Quiz Game",
+  "scripts": {
+    "install:all": "npm install && cd frontend && npm install && cd ../server && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "start:server": "cd server && npm start",
+    "build": "cd frontend && npm run build"
+  },
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
