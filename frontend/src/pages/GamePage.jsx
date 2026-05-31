@@ -185,23 +185,16 @@ const GamePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6"
               >
-                {isHost ? (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleNext}
-                    className="w-full py-4 bg-primary text-primary-foreground rounded-xl 
-                               font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
-                  >
-                    <i className="fas fa-arrow-right"></i>
-                    {currentQuestionIndex + 1 >= questions.length ? 'See Results 🏆' : 'Next Question'}
-                  </motion.button>
-                ) : (
-                  <div className="text-center py-4 px-6 bg-secondary/50 rounded-xl border border-border">
-                    <i className="fas fa-clock text-primary mr-2"></i>
-                    <span className="text-muted-foreground">Waiting for host to continue...</span>
-                  </div>
-                )}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleNext}
+                  className="w-full py-4 bg-primary text-primary-foreground rounded-xl 
+                             font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                >
+                  <i className="fas fa-arrow-right"></i>
+                  {currentQuestionIndex + 1 >= questions.length ? 'See Results 🏆' : 'Next Question'}
+                </motion.button>
               </motion.div>
             )}
           </div>
