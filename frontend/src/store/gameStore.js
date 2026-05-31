@@ -178,6 +178,12 @@ const useGameStore = create((set, get) => ({
       set({ playerScores });
     });
     
+    // Listen for all players answered event
+    socket.on('all_answered', () => {
+      // This event can be used to sync state if needed
+      console.log('All players have answered');
+    });
+    
     socket.on('game_finished', ({ players }) => {
       set({
         gameState: 'finished',

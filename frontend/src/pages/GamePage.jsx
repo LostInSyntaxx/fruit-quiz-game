@@ -16,7 +16,7 @@ const GamePage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [answeredPlayers, setAnsweredPlayers] = useState(new Set());
+  const [answeredCount, setAnsweredCount] = useState(0);
 
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const currentQuestionIndex = useGameStore((state) => state.currentQuestionIndex);
@@ -32,7 +32,7 @@ const GamePage = () => {
   const { playCorrect, playWrong, playClick } = useSoundEffects();
 
   // Check if all players have answered
-  const allPlayersAnswered = answeredPlayers.size === players.length;
+  const allPlayersAnswered = answeredCount === players.length;
 
   // Redirect if game finished
   if (gameState === 'finished') {
@@ -65,8 +65,8 @@ const GamePage = () => {
     setHasAnswered(true);
     setSelectedAnswer(answerIndex);
     
-    // Track that this player has answered
-    setAnsweredPlayers(prev => new Set([...prev, playerId]));
+    // Update local answered count
+    setAnsweredCount(prev => prev + 1);
     
     const timeRemaining = useGameStore.getState().timeRemaining;
     submitAnswer(currentQuestionIndex, answerIndex, timeRemaining);
@@ -91,7 +91,7 @@ const GamePage = () => {
     setSelectedAnswer(null);
     setHasAnswered(false);
     setShowResult(false);
-    setAnsweredPlayers(new Set());
+    setAnsweredCount(0);
     nextQuestion();
   };
 
@@ -213,7 +213,7 @@ const GamePage = () => {
               >
                 <i className="fas fa-clock text-primary mr-2"></i>
                 <span className="text-muted-foreground">
-                  Waiting for other players... ({answeredPlayers.size}/{players.length} answered)
+                  Waiting for other players... ({answeredCount}/{players.length} answered)
                 </span>
               </motion.div>
             )}

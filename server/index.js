@@ -135,6 +135,12 @@ io.on('connection', (socket) => {
       timeRemaining
     };
 
+    // Check if all players have answered
+    const allAnswered = room.players.every(p => room.answers[p.id]);
+    if (allAnswered) {
+      io.to(roomCode).emit('all_answered');
+    }
+
     io.to(roomCode).emit('answer_result', {
       playerId: socket.id,
       correct: isCorrect,
@@ -143,11 +149,18 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Next question
+  // Next question - Allow any player to trigger after all answered
   socket.on('next_question', ({ roomCode }) => {
     const room = rooms[roomCode];
     
-    if (!room || room.host !== socket.id) return;
+    if (!room) return;
+    
+    // Check if all players have answered
+    const allAnswered = room.players.every(p => room.answers[p.id]);
+    if (!allAnswered) {
+      socket.emit('error', { message: 'Not all players have answered yet' });
+      return;
+    }
 
     room.questionIndex++;
     room.answers = {};
