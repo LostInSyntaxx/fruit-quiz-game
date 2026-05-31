@@ -33,6 +33,9 @@ const GamePage = () => {
 
   // Check if all players have answered
   const allPlayersAnswered = answeredCount === players.length;
+  
+  // Don't show result if this player hasn't answered yet
+  const shouldShowResult = showResult && hasAnswered;
 
   // Redirect if game finished
   if (gameState === 'finished') {
@@ -81,11 +84,18 @@ const GamePage = () => {
       }
     }, 500);
     
-    // Show result briefly
+    // Show result briefly (only for this player)
     setTimeout(() => {
       setShowResult(true);
     }, 500);
   };
+
+  // Reset state when question changes
+  useEffect(() => {
+    setHasAnswered(false);
+    setSelectedAnswer(null);
+    setShowResult(false);
+  }, [currentQuestionIndex]);
 
   const handleNext = () => {
     setSelectedAnswer(null);
@@ -159,8 +169,8 @@ const GamePage = () => {
                 {currentQuestion.options.map((option, index) => {
                   const isSelected = selectedAnswer === index;
                   const isCorrect = currentQuestion.correctIndex === index;
-                  const showCorrect = hasAnswered && isCorrect;
-                  const showWrong = hasAnswered && isSelected && !isCorrect;
+                  const showCorrect = shouldShowResult && isCorrect;
+                  const showWrong = shouldShowResult && isSelected && !isCorrect;
 
                   return (
                     <motion.button
@@ -180,7 +190,7 @@ const GamePage = () => {
                           : isSelected
                           ? 'bg-primary/30 border-2 border-primary'
                           : 'glass-button'
-                      } ${hasAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      } ${hasAnswered ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-bold text-foreground">
@@ -195,6 +205,20 @@ const GamePage = () => {
                 })}
               </AnimatePresence>
             </div>
+
+            {/* Waiting Message (if not answered yet but others have) */}
+            {showResult && !hasAnswered && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-6 text-center py-4 px-6 bg-secondary/50 rounded-xl border border-border"
+              >
+                <i className="fas fa-clock text-primary mr-2"></i>
+                <span className="text-muted-foreground">
+                  You haven't answered yet. Time's up!
+                </span>
+              </motion.div>
+            )}
 
             {/* Next Button */}
             {showResult && allPlayersAnswered && (
