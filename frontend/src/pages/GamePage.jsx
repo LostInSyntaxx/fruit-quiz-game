@@ -92,6 +92,16 @@ const GamePage = () => {
     setHasAnswered(false);
     setShowResult(false);
     setAnsweredCount(0);
+    
+    // Reset answer info for all players
+    const updatedPlayers = players.map(p => ({
+      ...p,
+      answerIndex: null,
+      correct: null,
+      answered: null
+    }));
+    useGameStore.setState({ players: updatedPlayers });
+    
     nextQuestion();
   };
 

@@ -76,26 +76,37 @@ const PlayerGrid = ({ players, currentPlayerId, showAnswers = false }) => {
                       {player.score}
                     </motion.p>
                     
-                    {/* Answer Status (if showing) */}
-                    {showAnswers && player.answered !== undefined && (
+                    {/* Answer Selection (if showing) */}
+                    {showAnswers && player.answerIndex !== null && player.answerIndex !== undefined && (
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className={`mt-2 px-2 py-1 rounded-full text-xs font-bold ${
-                          player.answered === 'correct'
-                            ? 'bg-green-500/20 text-green-400'
-                            : player.answered === 'wrong'
-                            ? 'bg-destructive/20 text-destructive'
-                            : 'bg-muted text-muted-foreground'
-                        }`}
+                        className="mt-2"
                       >
-                        {player.answered === 'correct' ? (
-                          <><i className="fas fa-check mr-1"></i>Correct</>
-                        ) : player.answered === 'wrong' ? (
-                          <><i className="fas fa-times mr-1"></i>Wrong</>
-                        ) : (
-                          <><i className="fas fa-clock mr-1"></i>Waiting</>
-                        )}
+                        <div className={`px-3 py-1.5 rounded-full text-sm font-bold ${
+                          player.correct
+                            ? 'bg-green-500/20 text-green-400 border-2 border-green-500'
+                            : 'bg-destructive/20 text-destructive border-2 border-destructive'
+                        }`}>
+                          <span className="mr-1">Answer:</span>
+                          <span className="text-lg">{String.fromCharCode(65 + player.answerIndex)}</span>
+                          {player.correct ? (
+                            <i className="fas fa-check ml-2"></i>
+                          ) : (
+                            <i className="fas fa-times ml-2"></i>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                    
+                    {/* Answer Status (if not answered yet) */}
+                    {showAnswers && (player.answerIndex === null || player.answerIndex === undefined) && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="mt-2 px-2 py-1 rounded-full text-xs font-bold bg-muted text-muted-foreground"
+                      >
+                        <i className="fas fa-clock mr-1"></i>Waiting
                       </motion.div>
                     )}
                   </div>

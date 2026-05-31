@@ -132,7 +132,8 @@ io.on('connection', (socket) => {
     room.answers[socket.id] = {
       correct: isCorrect,
       points,
-      timeRemaining
+      timeRemaining,
+      answerIndex: answerIndex
     };
 
     // Check if all players have answered
@@ -141,11 +142,26 @@ io.on('connection', (socket) => {
       io.to(roomCode).emit('all_answered');
     }
 
+    // Send answer info for PlayerGrid display
+    const playerAnswers = room.players.map(p => {
+      const answer = room.answers[p.id];
+      return {
+        id: p.id,
+        name: p.name,
+        score: p.score,
+        avatar: p.avatar,
+        answerIndex: answer ? answer.answerIndex : null,
+        correct: answer ? answer.correct : null,
+        answered: answer ? (answer.correct ? 'correct' : 'wrong') : null
+      };
+    });
+
     io.to(roomCode).emit('answer_result', {
       playerId: socket.id,
       correct: isCorrect,
       points,
-      playerScores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score, avatar: p.avatar }))
+      playerScores: room.players.map(p => ({ id: p.id, name: p.name, score: p.score, avatar: p.avatar })),
+      playerAnswers: playerAnswers
     });
   });
 

@@ -174,8 +174,18 @@ const useGameStore = create((set, get) => ({
       });
     });
     
-    socket.on('answer_result', ({ playerId, correct, points, playerScores }) => {
+    socket.on('answer_result', ({ playerId, correct, points, playerScores, playerAnswers }) => {
       set({ playerScores });
+      
+      // Update players with answer info
+      if (playerAnswers) {
+        const state = get();
+        const updatedPlayers = state.players.map(p => {
+          const answerInfo = playerAnswers.find(a => a.id === p.id);
+          return answerInfo ? { ...p, ...answerInfo } : p;
+        });
+        set({ players: updatedPlayers });
+      }
     });
     
     // Listen for all players answered event
