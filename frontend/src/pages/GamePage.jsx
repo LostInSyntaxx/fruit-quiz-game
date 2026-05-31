@@ -16,6 +16,7 @@ const GamePage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [answeredPlayers, setAnsweredPlayers] = useState(new Set());
 
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const currentQuestionIndex = useGameStore((state) => state.currentQuestionIndex);
@@ -29,6 +30,9 @@ const GamePage = () => {
   const isAuthenticated = useGameStore((state) => state.isAuthenticated);
   const playerScores = useGameStore((state) => state.playerScores);
   const { playCorrect, playWrong, playClick } = useSoundEffects();
+
+  // Check if all players have answered
+  const allPlayersAnswered = answeredPlayers.size === players.length;
 
   // Redirect if game finished
   if (gameState === 'finished') {
@@ -61,6 +65,9 @@ const GamePage = () => {
     setHasAnswered(true);
     setSelectedAnswer(answerIndex);
     
+    // Track that this player has answered
+    setAnsweredPlayers(prev => new Set([...prev, playerId]));
+    
     const timeRemaining = useGameStore.getState().timeRemaining;
     submitAnswer(currentQuestionIndex, answerIndex, timeRemaining);
     
@@ -84,6 +91,7 @@ const GamePage = () => {
     setSelectedAnswer(null);
     setHasAnswered(false);
     setShowResult(false);
+    setAnsweredPlayers(new Set());
     nextQuestion();
   };
 
@@ -179,7 +187,7 @@ const GamePage = () => {
             </div>
 
             {/* Next Button */}
-            {showResult && (
+            {showResult && allPlayersAnswered && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -195,6 +203,18 @@ const GamePage = () => {
                   <i className="fas fa-arrow-right"></i>
                   {currentQuestionIndex + 1 >= questions.length ? 'See Results 🏆' : 'Next Question'}
                 </motion.button>
+              </motion.div>
+            )}
+            {showResult && !allPlayersAnswered && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-6 text-center py-4 px-6 bg-secondary/50 rounded-xl border border-border"
+              >
+                <i className="fas fa-clock text-primary mr-2"></i>
+                <span className="text-muted-foreground">
+                  Waiting for other players... ({answeredPlayers.size}/{players.length} answered)
+                </span>
               </motion.div>
             )}
           </div>
